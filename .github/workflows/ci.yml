@@ -5,12 +5,13 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+        zig: [0.11.0]
     runs-on: ${{matrix.os}}
     steps:
       - uses: actions/checkout@v2
       - uses: goto-bus-stop/setup-zig@v2
         with:
-          version: 0.11.0
+          version: ${{matrix.zig}}
       - run: zig build test
   lint:
     runs-on: ubuntu-latest
