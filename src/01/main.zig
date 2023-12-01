@@ -11,8 +11,7 @@ pub fn solve_1(inp: []const u8) u32 {
             if (first_digit == 0) {
                 first_digit = last_digit;
             }
-        }
-        else if (c == '\n') {
+        } else if (c == '\n') {
             result += first_digit * 10 + last_digit;
             first_digit = 0;
             last_digit = 0;
@@ -24,18 +23,7 @@ pub fn solve_1(inp: []const u8) u32 {
 
     return result;
 }
-
-const num_strings = [_][]const u8 {
-    "one",
-    "two",
-    "three",
-    "four",
-    "five",
-    "six",
-    "seven",
-    "eight",
-    "nine"
-};
+const num_strings = [_][]const u8{ "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
 
 pub fn solve_2(inp: []const u8) u32 {
     var result: u32 = 0;
@@ -56,7 +44,7 @@ pub fn solve_2(inp: []const u8) u32 {
             last_digit = 0;
         } else {
             inline for (num_strings, 1..) |s, j| {
-                if (i + s.len - 1 < inp.len and std.mem.eql(u8, s, inp[i..i + s.len])) {
+                if (i + s.len - 1 < inp.len and std.mem.eql(u8, s, inp[i .. i + s.len])) {
                     last_digit = j;
                     if (first_digit == 0) {
                         first_digit = last_digit;
