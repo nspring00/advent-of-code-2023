@@ -37,11 +37,11 @@ fn min_required_cubes(inp: []const u8) [3]u32 {
             const n = std.fmt.parseInt(u8, n_str, 10) catch unreachable;
             const color = parts.next() orelse unreachable;
             var color_id: usize = undefined;
-            if (std.mem.eql(u8, color, "red")) {
+            if (std.mem.startsWith(u8, color[0..3], "red")) {
                 color_id = 0;
-            } else if (std.mem.eql(u8, color, "green")) {
+            } else if (std.mem.startsWith(u8, color, "green")) {
                 color_id = 1;
-            } else if (std.mem.eql(u8, color, "blue")) {
+            } else if (std.mem.startsWith(u8, color, "blue")) {
                 color_id = 2;
             } else {
                 unreachable;
