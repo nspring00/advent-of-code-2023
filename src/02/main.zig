@@ -5,20 +5,26 @@ const available_cubes = [_]u8{ 12, 13, 14 };
 pub fn solve_1(inp: []const u8) u32 {
     var lines = std.mem.tokenizeScalar(u8, inp, '\n');
     var result: u32 = 0;
-    var i: u32 = 1;
-    while (lines.next()) |line| {
-        if (validate_game(line)) {
-            result += i;
+    var gamd_id: u32 = 0;
+    game: while (lines.next()) |line| {
+        gamd_id += 1;
+        const required_cubes = min_required_cubes(line);
+        for (0..3) |i| {
+            if (required_cubes[i] > available_cubes[i]) {
+                continue :game;
+            }
         }
-        i += 1;
+        result += gamd_id;
     }
 
     return result;
 }
 
-fn validate_game(inp: []const u8) bool {
+fn min_required_cubes(inp: []const u8) [3]u32 {
     // Skip the game id
-    const i = (std.mem.indexOfScalar(u8, inp, ':') orelse return false) + 1;
+    const i = (std.mem.indexOfScalar(u8, inp, ':') orelse unreachable) + 1;
+
+    var required_cubes = [_]u32{ 0, 0, 0 };
 
     // Split the individual rounds
     var rounds = std.mem.tokenizeScalar(u8, inp[i..], ';');
@@ -27,9 +33,9 @@ fn validate_game(inp: []const u8) bool {
         var pulled_cubes = [_]u8{ 0, 0, 0 };
         while (pulls.next()) |pull| {
             var parts = std.mem.tokenizeScalar(u8, pull, ' ');
-            const n_str = parts.next() orelse return false;
+            const n_str = parts.next() orelse unreachable;
             const n = std.fmt.parseInt(u8, n_str, 10) catch unreachable;
-            const color = parts.next() orelse return false;
+            const color = parts.next() orelse unreachable;
             var color_id: usize = undefined;
             if (std.mem.eql(u8, color, "red")) {
                 color_id = 0;
@@ -45,18 +51,24 @@ fn validate_game(inp: []const u8) bool {
         }
 
         for (0..3) |c_i| {
-            if (pulled_cubes[c_i] > available_cubes[c_i]) {
-                return false;
+            if (pulled_cubes[c_i] > required_cubes[c_i]) {
+                required_cubes[c_i] = pulled_cubes[c_i];
             }
         }
     }
 
-    return true;
+    return required_cubes;
 }
 
 pub fn solve_2(inp: []const u8) u32 {
-    _ = inp;
-    return 0;
+    var lines = std.mem.tokenizeScalar(u8, inp, '\n');
+    var result: u32 = 0;
+    while (lines.next()) |line| {
+        const required_cubes = min_required_cubes(line);
+        result += required_cubes[0] * required_cubes[1] * required_cubes[2];
+    }
+
+    return result;
 }
 
 const example_input = @embedFile("input-example.txt");
@@ -68,6 +80,6 @@ test "solve_1" {
 }
 
 test "solve_2" {
-    try std.testing.expectEqual(@as(u32, 0), solve_2(example_input));
-    try std.testing.expectEqual(@as(u32, 0), solve_2(input));
+    try std.testing.expectEqual(@as(u32, 2286), solve_2(example_input));
+    try std.testing.expectEqual(@as(u32, 69929), solve_2(input));
 }
