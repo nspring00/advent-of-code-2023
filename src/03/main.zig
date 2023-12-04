@@ -1,5 +1,4 @@
 const std = @import("std");
-const Allocator = std.mem.Allocator;
 
 pub fn solve_1(inp: []const u8) u32 {
     const width = (std.mem.indexOfScalar(u8, inp, '\n') orelse unreachable) + 1;
