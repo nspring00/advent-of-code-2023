@@ -58,8 +58,96 @@ fn is_symbol(c: u8) bool {
 }
 
 pub fn solve_2(inp: []const u8) u32 {
-    _ = inp;
-    return 0;
+    const width = (std.mem.indexOfScalar(u8, inp, '\n') orelse unreachable) + 1;
+    var result: u32 = 0;
+
+    var i: usize = 0;
+    while (std.mem.indexOfPos(u8, inp, i, "*")) |idx| {
+        result += gear_nr(inp, idx, width);
+        i = idx + 1;
+    }
+
+    return result;
+}
+
+fn gear_nr(inp: []const u8, idx: usize, width: usize) u32 {
+    var right1: usize = 0;
+    var right2: usize = 0;
+    var number1: u32 = 0;
+    var number2: u32 = 0;
+
+    for (idx - 1..idx + 2) |i| {
+        if (width <= i and i - width >= right1 and is_digit(inp[i - width])) {
+            const left = get_bound_left(inp, i - width);
+            right1 = get_bound_right(inp, i - width);
+            const nr = std.fmt.parseInt(u32, inp[left..right1], 10) catch unreachable;
+            if (number1 == 0) {
+                number1 = nr;
+            } else if (number2 == 0) {
+                number2 = nr;
+            } else {
+                return 0;
+            }
+        }
+
+        if (i + width < inp.len and i + width >= right2 and is_digit(inp[i + width])) {
+            const left = get_bound_left(inp, i + width);
+            right2 = get_bound_right(inp, i + width);
+            const nr = std.fmt.parseInt(u32, inp[left..right2], 10) catch unreachable;
+            if (number1 == 0) {
+                number1 = nr;
+            } else if (number2 == 0) {
+                number2 = nr;
+            } else {
+                return 0;
+            }
+        }
+    }
+
+    if (idx > 0 and is_digit(inp[idx - 1])) {
+        const left = get_bound_left(inp, idx - 1);
+        const nr = std.fmt.parseInt(u32, inp[left..idx], 10) catch unreachable;
+        if (number1 == 0) {
+            number1 = nr;
+        } else if (number2 == 0) {
+            number2 = nr;
+        } else {
+            return 0;
+        }
+    }
+
+    if (idx + 1 < inp.len and is_digit(inp[idx + 1])) {
+        const right = get_bound_right(inp, idx + 1);
+        const nr = std.fmt.parseInt(u32, inp[idx + 1 .. right], 10) catch unreachable;
+        if (number1 == 0) {
+            number1 = nr;
+        } else if (number2 == 0) {
+            number2 = nr;
+        } else {
+            return 0;
+        }
+    }
+
+    if (number1 == 0 or number2 == 0) {
+        return 0;
+    }
+    return number1 * number2;
+}
+
+fn get_bound_left(inp: []const u8, i: usize) usize {
+    var left = i;
+    while (left > 0 and is_digit(inp[left - 1])) {
+        left -= 1;
+    }
+    return left;
+}
+
+fn get_bound_right(inp: []const u8, i: usize) usize {
+    var right = i;
+    while (right < inp.len and is_digit(inp[right])) {
+        right += 1;
+    }
+    return right;
 }
 
 const example_input = @embedFile("input-example.txt");
@@ -71,6 +159,6 @@ test "solve_1" {
 }
 
 test "solve_2" {
-    try std.testing.expectEqual(@as(u32, 0), solve_2(example_input));
-    try std.testing.expectEqual(@as(u32, 0), solve_2(input));
+    try std.testing.expectEqual(@as(u32, 467835), solve_2(example_input));
+    try std.testing.expectEqual(@as(u32, 84051670), solve_2(input));
 }
