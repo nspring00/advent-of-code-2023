@@ -3,4 +3,5 @@ comptime {
     _ = @import("02/main.zig");
     _ = @import("03/main.zig");
     _ = @import("04/main.zig");
+    _ = @import("05/main.zig");
 }
