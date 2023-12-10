@@ -8,4 +8,5 @@ comptime {
     _ = @import("07/main.zig");
     _ = @import("08/main.zig");
     _ = @import("09/main.zig");
+    _ = @import("10/main.zig");
 }
