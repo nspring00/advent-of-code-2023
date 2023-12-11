@@ -2,14 +2,18 @@ const std = @import("std");
 const Allocator = std.mem.Allocator;
 
 const Coord = struct {
-    x: u32,
-    y: u32,
+    x: u64,
+    y: u64,
 };
 
-pub fn solve_1(inp: []const u8, allocator: Allocator) u32 {
+pub fn solve_1(inp: []const u8, allocator: Allocator) u64 {
+    return calculate_distances(inp, 2, allocator);
+}
+
+pub fn calculate_distances(inp: []const u8, empty_distance: u32, allocator: Allocator) u64 {
     const width = std.mem.indexOfScalar(u8, inp, '\n').? + 1;
     const height = (inp.len + 2) / width;
-    var col_prefix = std.mem.zeroes([140]u8);
+    var col_prefix = std.mem.zeroes([140]u32);
 
     // Correct for missing (\r)\n at end of file
     // Empty columns need to be counted double -> store additional offset for each column
@@ -35,7 +39,7 @@ pub fn solve_1(inp: []const u8, allocator: Allocator) u32 {
             if (col_i == 0) {
                 col_prefix[col_i] = 1;
             } else {
-                col_prefix[col_i] = col_prefix[col_i - 1] + 1;
+                col_prefix[col_i] = col_prefix[col_i - 1] + empty_distance - 1;
             }
         }
     }
@@ -49,9 +53,10 @@ pub fn solve_1(inp: []const u8, allocator: Allocator) u32 {
     for (0..inp.len) |i| {
         if (inp[i] == '\n') {
             if (!found_galaxy_in_row) {
+                row += empty_distance;
+            } else {
                 row += 1;
             }
-            row += 1;
             found_galaxy_in_row = false;
             continue;
         }
@@ -64,7 +69,7 @@ pub fn solve_1(inp: []const u8, allocator: Allocator) u32 {
         }
     }
 
-    var result: u32 = 0;
+    var result: u64 = 0;
     for (galaxies.items, 1..) |this, other_start| {
         for (other_start..galaxies.items.len) |other_i| {
             const other = galaxies.items[other_i];
@@ -76,20 +81,24 @@ pub fn solve_1(inp: []const u8, allocator: Allocator) u32 {
     return result;
 }
 
-pub fn solve_2(inp: []const u8) u32 {
-    _ = inp;
-    return 0;
+pub fn solve_2(inp: []const u8, allocator: Allocator) u64 {
+    return calculate_distances(inp, 1000000, allocator);
 }
 
 const example_input = @embedFile("input-example.txt");
 const input = @embedFile("input.txt");
 
 test "solve_1" {
-    try std.testing.expectEqual(@as(u32, 374), solve_1(example_input, std.testing.allocator));
-    try std.testing.expectEqual(@as(u32, 9805264), solve_1(input, std.testing.allocator));
+    try std.testing.expectEqual(@as(u64, 374), solve_1(example_input, std.testing.allocator));
+    try std.testing.expectEqual(@as(u64, 9805264), solve_1(input, std.testing.allocator));
+}
+
+test "calculate_distances" {
+    try std.testing.expectEqual(@as(u64, 1030), calculate_distances(example_input, 10, std.testing.allocator));
+    try std.testing.expectEqual(@as(u64, 8410), calculate_distances(example_input, 100, std.testing.allocator));
 }
 
 test "solve_2" {
-    try std.testing.expectEqual(@as(u64, 0), solve_2(example_input));
-    try std.testing.expectEqual(@as(u64, 0), solve_2(input));
+    try std.testing.expectEqual(@as(u64, 82000210), solve_2(example_input, std.testing.allocator));
+    try std.testing.expectEqual(@as(u64, 779032247216), solve_2(input, std.testing.allocator));
 }
