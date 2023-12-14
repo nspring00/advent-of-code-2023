@@ -83,7 +83,7 @@ fn solve_day(day: usize, allocator: Allocator) Solution {
         11 => day_11.solve_2(input_11, allocator),
         12 => day_12.solve_2(input_12),
         13 => day_13.solve_2(input_13),
-        14 => day_14.solve_2(input_14),
+        14 => day_14.solve_2(input_14, allocator),
         else => @panic("Day not implemented"),
     };
     const end_2 = std.time.milliTimestamp();
