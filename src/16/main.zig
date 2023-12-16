@@ -7,23 +7,27 @@ const UP: u8 = 3;
 
 pub fn solve_1(inp: []const u8) u32 {
     const width: u16 = @truncate(std.mem.indexOfScalar(u8, inp, '\n').? + 1);
-    const content_width: u16 = @truncate(std.mem.indexOfAny(u8, inp, "\r\n").?);
     const height: u16 = @truncate((inp.len + 2) / width);
 
     var visited = std.mem.zeroes([4 * 112 * 110]bool);
-    recurse(inp, visited[0 .. 4 * height * width], 0, RIGHT, @bitCast(width), @bitCast(height));
+    var visited_slice = visited[0 .. 4 * height * width];
+
+    return count_energized(inp, visited_slice, 0, RIGHT, width, height);
+}
+
+fn count_energized(inp: []const u8, visited: []bool, start_pos: u32, start_dir: u8, width: u16, height: u16) u32 {
+    recurse(inp, visited, @bitCast(start_pos), start_dir, @bitCast(width), @bitCast(height));
 
     var result: u32 = 0;
-    for (0..height) |y| {
-        inner: for (0..content_width) |x| {
-            const pos: usize = 4 * (y * width + x);
-            for (0..4) |dir| {
-                if (visited[pos + dir]) {
-                    result += 1;
-                    continue :inner;
-                }
-            }
+    var i: usize = 0;
+    while (i < visited.len) : (i += 4) {
+        if (visited[i] or visited[i + 1] or visited[i + 2] or visited[i + 3]) {
+            result += 1;
         }
+    }
+
+    for (0..visited.len) |j| {
+        visited[j] = false;
     }
 
     return result;
@@ -95,8 +99,38 @@ fn recurse(inp: []const u8, visited: []bool, pos: i32, dir: u8, width: i16, heig
 }
 
 pub fn solve_2(inp: []const u8) u32 {
-    _ = inp;
-    return 0;
+    const width: u16 = @truncate(std.mem.indexOfScalar(u8, inp, '\n').? + 1);
+    const content_width: u16 = @truncate(std.mem.indexOfAny(u8, inp, "\r\n").?);
+    const height: u16 = @truncate((inp.len + 2) / width);
+
+    var visited = std.mem.zeroes([4 * 112 * 110]bool);
+    var visited_slice = visited[0 .. 4 * height * width];
+
+    var max_result: u32 = 0;
+
+    for (0..height) |y| {
+        const val_1 = count_energized(inp, visited_slice, @truncate(y * width), RIGHT, width, height);
+        if (val_1 > max_result) {
+            max_result = val_1;
+        }
+        const val_2 = count_energized(inp, visited_slice, @truncate(y * width + content_width - 1), LEFT, width, height);
+        if (val_2 > max_result) {
+            max_result = val_2;
+        }
+    }
+
+    for (0..width) |x| {
+        const val_1 = count_energized(inp, visited_slice, @truncate(x), DOWN, width, height);
+        if (val_1 > max_result) {
+            max_result = val_1;
+        }
+        const val_2 = count_energized(inp, visited_slice, @truncate(x + (height - 1) * width), UP, width, height);
+        if (val_2 > max_result) {
+            max_result = val_2;
+        }
+    }
+
+    return max_result;
 }
 
 const example_input = @embedFile("input-example.txt");
@@ -127,6 +161,6 @@ test "solve_1" {
 }
 
 test "solve_2" {
-    try std.testing.expectEqual(@as(u32, 0), solve_2(example_input));
-    try std.testing.expectEqual(@as(u32, 0), solve_2(input));
+    try std.testing.expectEqual(@as(u32, 51), solve_2(example_input));
+    try std.testing.expectEqual(@as(u32, 7853), solve_2(input));
 }
