@@ -16,6 +16,7 @@ const day_13 = @import("13/main.zig");
 const day_14 = @import("14/main.zig");
 const day_15 = @import("15/main.zig");
 const day_16 = @import("16/main.zig");
+const day_17 = @import("17/main.zig");
 
 pub fn main() !void {
     const stdout = std.io.getStdOut().writer();
@@ -29,7 +30,7 @@ pub fn main() !void {
     try stdout.print("###################################\n\n", .{});
 
     var total_ms: u64 = 0;
-    for (1..17) |day| {
+    for (1..18) |day| {
         total_ms += try run_day(day, allocator);
     }
 
@@ -69,6 +70,7 @@ fn solve_day(day: usize, allocator: Allocator) Solution {
         14 => day_14.solve_1(input_14),
         15 => day_15.solve_1(input_15),
         16 => day_16.solve_1(input_16),
+        17 => day_17.solve_1(input_17, allocator),
         else => @panic("Day not implemented"),
     };
     const end_1 = std.time.milliTimestamp();
@@ -90,6 +92,7 @@ fn solve_day(day: usize, allocator: Allocator) Solution {
         14 => day_14.solve_2(input_14, allocator),
         15 => day_15.solve_2(input_15, allocator),
         16 => day_16.solve_2(input_16),
+        17 => day_17.solve_2(input_17, allocator),
         else => @panic("Day not implemented"),
     };
     const end_2 = std.time.milliTimestamp();
@@ -118,3 +121,4 @@ const input_13 = @embedFile("13/input.txt");
 const input_14 = @embedFile("14/input.txt");
 const input_15 = @embedFile("15/input.txt");
 const input_16 = @embedFile("16/input.txt");
+const input_17 = @embedFile("17/input.txt");
