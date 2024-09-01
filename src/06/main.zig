@@ -24,8 +24,8 @@ pub fn solve_1(inp: []const u8) u32 {
                 continue;
             }
 
-            var t = std.fmt.parseFloat(f64, num_str_1) catch unreachable;
-            var d = std.fmt.parseFloat(f64, num_str_2) catch unreachable;
+            const t = std.fmt.parseFloat(f64, num_str_1) catch unreachable;
+            const d = std.fmt.parseFloat(f64, num_str_2) catch unreachable;
 
             result *= solve_quadratic(t, d);
 

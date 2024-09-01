@@ -57,11 +57,11 @@ pub fn solve_2(inp: []const u8, allocator: Allocator) u32 {
     var cycle: u32 = 0;
     while (true) {
         var key = std.mem.zeroes([10_000]bool);
-        std.mem.copy(bool, &key, &moving);
+        std.mem.copyForwards(bool, &key, &moving);
 
         if (lookup.get(key)) |cycle_start| {
             const cycle_length = cycle - cycle_start;
-            var remaining = (1_000_000_000 - cycle) % cycle_length;
+            const remaining = (1_000_000_000 - cycle) % cycle_length;
 
             for (0..remaining) |_| {
                 run_cycle(&moving, &rocks, content_width, height);

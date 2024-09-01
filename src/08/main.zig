@@ -48,7 +48,7 @@ fn parse_graph(inp: []const u8, allocator: Allocator) std.StringHashMap(Path) {
         const to_l = line[7..10];
         const to_r = line[12..15];
 
-        var path = Path{ .left = to_l, .right = to_r };
+        const path = Path{ .left = to_l, .right = to_r };
         graph.put(from, path) catch unreachable;
     }
 

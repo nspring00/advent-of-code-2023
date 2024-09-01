@@ -138,10 +138,10 @@ fn process_line_2(line: []const u8) u64 {
             str[str_len] = '?';
             str_len += 1;
         }
-        std.mem.copy(u8, str[str_len..], str_fold);
+        std.mem.copyForwards(u8, str[str_len..], str_fold);
         str_len += str_fold.len;
     }
-    var str_slice = (&str[0..str_len]).*;
+    const str_slice = (&str[0..str_len]).*;
 
     // Parse groups
     var group_iter = std.mem.splitScalar(u8, line[str_end + 1 ..], ',');

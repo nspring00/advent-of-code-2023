@@ -17,7 +17,7 @@ pub fn solve_1(inp: []const u8, allocator: Allocator) u32 {
         hands_list.append(parse_hand_1(line)) catch unreachable;
     }
 
-    var hands = hands_list.toOwnedSlice() catch unreachable;
+    const hands = hands_list.toOwnedSlice() catch unreachable;
     defer allocator.free(hands);
 
     std.mem.sort(Hand, hands, {}, cmp_hands);
@@ -236,7 +236,7 @@ pub fn solve_2(inp: []const u8, allocator: Allocator) u32 {
         hands_list.append(parse_hand_2(line)) catch unreachable;
     }
 
-    var hands = hands_list.toOwnedSlice() catch unreachable;
+    const hands = hands_list.toOwnedSlice() catch unreachable;
     defer allocator.free(hands);
 
     std.mem.sort(Hand, hands, {}, cmp_hands);

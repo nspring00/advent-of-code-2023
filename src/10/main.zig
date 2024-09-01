@@ -59,28 +59,28 @@ fn next_pipe(inp: []const u8, pipe: usize, last: usize, width: usize) usize {
 
     // Check upper
     if ((cur == '|' or cur == 'J' or cur == 'L') and pipe >= width) {
-        var upper = pipe - width;
+        const upper = pipe - width;
         if (upper != last and (inp[upper] == '|' or inp[upper] == 'F' or inp[upper] == '7')) {
             return upper;
         }
     }
 
     // Check lower
-    var lower = pipe + width;
+    const lower = pipe + width;
     if ((cur == '|' or cur == 'F' or cur == '7') and lower < inp.len and lower != last and (inp[lower] == '|' or inp[lower] == 'J' or inp[lower] == 'L')) {
         return lower;
     }
 
     // Check left
     if ((cur == '-' or cur == '7' or cur == 'J') and pipe > 0) {
-        var left = pipe - 1;
+        const left = pipe - 1;
         if (left != last and (inp[left] == '-' or inp[left] == 'F' or inp[left] == 'L')) {
             return left;
         }
     }
 
     // Check right
-    var right = pipe + 1;
+    const right = pipe + 1;
     if ((cur == '-' or cur == 'F' or cur == 'L') and right < inp.len and right != last and (inp[right] == '-' or inp[right] == '7' or inp[right] == 'J')) {
         return right;
     }

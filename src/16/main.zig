@@ -10,7 +10,7 @@ pub fn solve_1(inp: []const u8) u32 {
     const height: u16 = @truncate((inp.len + 2) / width);
 
     var visited = std.mem.zeroes([4 * 112 * 110]bool);
-    var visited_slice = visited[0 .. 4 * height * width];
+    const visited_slice = visited[0 .. 4 * height * width];
 
     return count_energized(inp, visited_slice, 0, RIGHT, width, height);
 }
@@ -104,7 +104,7 @@ pub fn solve_2(inp: []const u8) u32 {
     const height: u16 = @truncate((inp.len + 2) / width);
 
     var visited = std.mem.zeroes([4 * 112 * 110]bool);
-    var visited_slice = visited[0 .. 4 * height * width];
+    const visited_slice = visited[0 .. 4 * height * width];
 
     var max_result: u32 = 0;
 
